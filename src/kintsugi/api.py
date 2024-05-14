@@ -47,21 +47,21 @@ class Api:
 
         return response.json()['session_id']
 
-    def predictions(self):
-        return PredictionsHandler(self)
+    def prediction(self):
+        return PredictionHandler(self)
 
     def feedback(self):
         return FeedbackHandler(self)
 
 
-class PredictionsHandler:
+class PredictionHandler:
 
     def __init__(self, api: Api):
         self.api = api
 
     def predict(self, audio_file) -> str:
         response = requests.post(
-            f'{self.api.config.url}/predict/depression/severity',
+            f'{self.api.config.url}/prediction/',
             headers=self.api.get_common_headers(),
             files={'file': audio_file},
             data={
