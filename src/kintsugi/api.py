@@ -101,9 +101,6 @@ class FeedbackHandler:
     def __init__(self, api: Api):
         self.api = api
 
-    def anxiety(self):
-        pass
-
     def depression(self):
         pass
 
