@@ -101,11 +101,44 @@ class FeedbackHandler:
     def __init__(self, api: Api):
         self.api = api
 
-    def depression(self):
-        pass
+    def _phq(self, session_id, answers) -> None:
+        count = len(answers)
 
-    def phq_2(self):
-        pass
+        if count not in (2, 9):
+            raise ValueError(f'Answers count not in (2, 9): {count}.')
 
-    def phq_9(self):
-        pass
+        data = {
+            'data': answers,
+            'session_id': session_id,
+        }
+        response = requests.patch(
+            f'{self.api.config.url}/feedback/phq/{count}',
+            headers=self.api.get_common_headers(),
+            data=json.dumps(data)
+        )
+
+        if response.status_code != 200:
+            raise ResponseException(response)
+
+    def depression(self, session_id: str, data: str):
+        if data not in ('false', 'true', 'additional_consideration_required'):
+            raise ValueError(f'Param data not in ("false", "true", "additional_consideration_required"): {data}.')
+
+        data = {
+            'data': data,
+            'session_id': session_id,
+        }
+        response = requests.patch(
+            f'{self.api.config.url}/feedback/depression/binary',
+            headers=self.api.get_common_headers(),
+            data=json.dumps(data)
+        )
+
+        if response.status_code != 200:
+            raise ResponseException(response)
+
+    def phq_2(self, session_id: str, answers: list) -> None:
+        return self._phq(session_id, answers)
+
+    def phq_9(self, session_id: str, answers: list) -> None:
+        return self._phq(session_id, answers)
