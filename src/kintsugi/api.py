@@ -3,6 +3,15 @@ import requests
 import json
 
 
+class ResponseException(Exception):
+    def __init__(self, response: requests.Response):
+        self.code = response.status_code
+        try:
+            self.message = response.json().get('message')
+        except ValueError:
+            self.message = None
+
+
 @dataclass
 class Config:
     x_api_key: str
@@ -16,12 +25,13 @@ class Api:
         self.config:Config = config
         self.metadata: dict = metadata if metadata is not None else {}
 
-    def new_session_id(self) -> str:
-        headers = {
+    def get_common_headers(self):
+        return {
             'accept': 'application/json',
             'X-API-Key': self.config.x_api_key,
-            'Content-Type': 'application/json',
         }
+
+    def new_session_id(self) -> str:
         data = {
             'is_initiated': self.is_initiated,
             'metadata': self.metadata,
@@ -29,13 +39,13 @@ class Api:
         }
         response = requests.post(
             f'{self.config.url}/initiate',
-            headers=headers,
+            headers=self.get_common_headers(),
             data=json.dumps(data)
         )
-        if response.status_code == 201:
-            return response.json()['session_id']
-        else:
-            return response.json()['message']
+        if response.status_code != 201:
+            raise ResponseException(response)
+
+        return response.json()['session_id']
 
     def predictions(self):
         return PredictionsHandler(self)
@@ -49,18 +59,42 @@ class PredictionsHandler:
     def __init__(self, api: Api):
         self.api = api
 
-    def predict_depression_severity(self) -> str:
-        session_id = self.api.new_session_id()
-        # Invoke endpoint
-        return session_id
+    def predict(self, audio_file) -> str:
+        response = requests.post(
+            f'{self.api.config.url}/predict/depression/severity',
+            headers=self.api.get_common_headers(),
+            files={'file': audio_file},
+            data={
+                'session_id': self.api.new_session_id(),
+            },
+        )
+
+        if response.status_code != 202:
+            raise ResponseException(response)
+
+        return response.json()['session_id']
 
     def get_prediction_by_session(self, session_id: str):
-        # Invoke endpoint
-        pass
+        response = requests.get(
+            f'{self.api.config.url}/predict/sessions/{session_id}',
+            headers=self.api.get_common_headers()
+        )
+
+        if response.status_code != 200:
+            raise ResponseException(response)
+
+        return response.json()
 
     def get_prediction_by_user(self, user_id: str):
-        # Invoke endpoint
-        pass
+        response = requests.get(
+            f'{self.api.config.url}/predict/users/{user_id}',
+            headers=self.api.get_common_headers()
+        )
+
+        if response.status_code != 200:
+            raise ResponseException(response)
+
+        return response.json()
 
 
 class FeedbackHandler:
