@@ -1,4 +1,3 @@
-from dataclasses import dataclass
 import requests
 import json
 
@@ -12,23 +11,18 @@ class ResponseException(Exception):
             self.message = None
 
 
-@dataclass
-class Config:
-    x_api_key: str
-    url: str
-
-
 class Api:
-    def __init__(self, user_id: str, is_initiated: bool, config: Config, metadata: dict=None):
+    def __init__(self, user_id: str, is_initiated: bool, x_api_key: str, url: str, metadata: dict=None):
         self.user_id: str = user_id
         self.is_initiated: bool = is_initiated
-        self.config:Config = config
+        self.x_api_key = x_api_key
+        self.url: str = url
         self.metadata: dict = metadata if metadata is not None else {}
 
     def get_common_headers(self):
         return {
             'accept': 'application/json',
-            'X-API-Key': self.config.x_api_key,
+            'X-API-Key': self.x_api_key,
         }
 
     def new_session_id(self) -> str:
@@ -38,7 +32,7 @@ class Api:
             'user_id': self.user_id,
         }
         response = requests.post(
-            f'{self.config.url}/initiate',
+            f'{self.url}/initiate',
             headers=self.get_common_headers(),
             data=json.dumps(data)
         )
@@ -61,7 +55,7 @@ class PredictionHandler:
 
     def predict(self, audio_file) -> str:
         response = requests.post(
-            f'{self.api.config.url}/prediction/',
+            f'{self.api.url}/prediction/',
             headers=self.api.get_common_headers(),
             files={'file': audio_file},
             data={
@@ -76,7 +70,7 @@ class PredictionHandler:
 
     def get_prediction_by_session(self, session_id: str):
         response = requests.get(
-            f'{self.api.config.url}/predict/sessions/{session_id}',
+            f'{self.api.url}/predict/sessions/{session_id}',
             headers=self.api.get_common_headers()
         )
 
@@ -87,7 +81,7 @@ class PredictionHandler:
 
     def get_prediction_by_user(self, user_id: str):
         response = requests.get(
-            f'{self.api.config.url}/predict/users/{user_id}',
+            f'{self.api.url}/predict/users/{user_id}',
             headers=self.api.get_common_headers()
         )
 
@@ -112,7 +106,7 @@ class FeedbackHandler:
             'session_id': session_id,
         }
         response = requests.patch(
-            f'{self.api.config.url}/feedback/phq/{count}',
+            f'{self.api.url}/feedback/phq/{count}',
             headers=self.api.get_common_headers(),
             data=json.dumps(data)
         )
@@ -129,7 +123,7 @@ class FeedbackHandler:
             'session_id': session_id,
         }
         response = requests.patch(
-            f'{self.api.config.url}/feedback/depression/binary',
+            f'{self.api.url}/feedback/depression/binary',
             headers=self.api.get_common_headers(),
             data=json.dumps(data)
         )

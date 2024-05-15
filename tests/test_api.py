@@ -3,44 +3,50 @@ import json
 import pytest
 from requests.models import Response
 from unittest.mock import patch, MagicMock
-from src.kintsugi.api import Api, Config, PredictionHandler, FeedbackHandler, ResponseException
+from src.kintsugi.api import Api, PredictionHandler, FeedbackHandler, ResponseException
 
 
 @pytest.fixture
-def config():
-    return Config(
-        x_api_key='x-api-key-for-tests',
-        url='https://tests.kintsugihealth.com'
-    )
+def api():
+    user_id = 'some-user'
+    is_initiated = True
+    x_api_key = 'x-api-key-for-tests'
+    url = 'https://tests.kintsugihealth.com'
+    metadata = {}
 
-
-@pytest.fixture
-def api(config):
-    api = Api('user_id', True, config)
+    api = Api(user_id, is_initiated, x_api_key, url, metadata)
     api.new_session_id = MagicMock()
+
     return api
 
 
-def test_api_initialization(config):
-    api = Api('test_user', True, config)
-    assert api.user_id == 'test_user'
-    assert api.is_initiated is True
-    assert api.config == config
-    assert api.metadata == {}
+def test_api_initialization():
+    user_id = 'some-user'
+    is_initiated = True
+    x_api_key = 'api-key'
+    url = 'some-url'
+    metadata = {'a': 1, 'b': 2}
+
+    api = Api(user_id, is_initiated, x_api_key, url, metadata)
+    assert api.user_id == user_id
+    assert api.is_initiated == is_initiated
+    assert api.x_api_key == x_api_key
+    assert api.url == url
+    assert api.metadata == metadata
 
 
-def test_get_common_headers(config):
-    api = Api('test_user', True, config)
+def test_get_common_headers(api):
     expected_headers = {
         'accept': 'application/json',
-        'X-API-Key': config.x_api_key,
+        'X-API-Key': api.x_api_key,
     }
     assert api.get_common_headers() == expected_headers
 
 
 @patch('requests.post')
-def test_new_session_id(mock_post, config):
-    api = Api('test_user', True, config)
+def test_new_session_id(mock_post, api):
+    api.new_session_id.return_value = 'test_session_id'
+
     mock_response = MagicMock()
     mock_response.status_code = 201
     mock_response.json.return_value = {"session_id": "test_session_id"}
@@ -50,8 +56,15 @@ def test_new_session_id(mock_post, config):
 
 
 @patch('requests.post')
-def test_new_session_id_failure(mock_post, config):
-    api = Api('test_user', True, config)
+def test_new_session_id_failure(mock_post):
+    user_id = 'some-user'
+    is_initiated = True
+    x_api_key = 'api-key'
+    url = 'some-url'
+    metadata = {'a': 1, 'b': 2}
+
+    api = Api(user_id, is_initiated, x_api_key, url, metadata)
+
     mock_response = MagicMock()
     mock_response.status_code = 400
     mock_post.return_value = mock_response
@@ -134,7 +147,7 @@ def test_phq(mock_patch, answers, api):
         handler.phq_9(session_id, answers)
 
     mock_patch.assert_called_once_with(
-        f'{api.config.url}/feedback/phq/{count}',
+        f'{api.url}/feedback/phq/{count}',
         headers=api.get_common_headers(),
         data=json.dumps({
             'data': answers,
