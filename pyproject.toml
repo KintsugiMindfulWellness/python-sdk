@@ -1,0 +1,18 @@
+[project]
+name = "kintsugi-python"
+version = "0.1.0"
+description = "Default template for PDM package"
+authors = [
+    {name = "Kintsugi Engineering Team", email = "python-sdk@kintsugihealth.com"},
+]
+dependencies = [
+    "requests>=2.31.0",
+    "pytest>=8.2.0",
+]
+requires-python = ">=3.10.*"
+readme = "README.md"
+license = {text = "MIT"}
+
+
+[tool.pdm]
+distribution = false
