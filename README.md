@@ -13,7 +13,7 @@ if __name__ == '__main__':
     user_id = os.environ['USER_ID']
     url = os.environ['URL']
 
-    # Parameters
+    # Arguments
     audio_file_1 = open('/Users/jackson/Downloads/test_audio.wav', 'rb')
     audio_file_2 = open('/Users/jackson/Downloads/test_audio.wav', 'rb')
     allowed_sample_rate = 44100
