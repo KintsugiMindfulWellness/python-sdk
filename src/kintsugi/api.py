@@ -1,5 +1,8 @@
 import requests
 import json
+from pprint import pprint
+from src.kintsugi.model import Prediction, FeedbackScore
+from src.kintsugi.parsers import PredictionParser
 
 
 class ResponseException(Exception):
@@ -82,7 +85,9 @@ class PredictionHandler:
         if response.status_code != 200:
             raise ResponseException(response)
 
-        return response.json()
+        data = response.json()
+        data['session_id'] = session_id
+        return PredictionParser().parse(data)
 
     def get_prediction_by_user(self, user_id: str):
         response = requests.get(
@@ -93,7 +98,9 @@ class PredictionHandler:
         if response.status_code != 200:
             raise ResponseException(response)
 
-        return response.json()
+        parser = PredictionParser()
+        list_data = response.json()
+        return [parser.parse(data) for data in list_data]
 
 
 class FeedbackHandler:

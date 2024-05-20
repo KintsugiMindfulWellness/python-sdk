@@ -38,6 +38,8 @@ if __name__ == '__main__':
 
     # Get prediction by session
     prediction_response = api.prediction().get_prediction_by_session(session_id)
+    print(f'Score for depression: {prediction_response.get_score("depression")}')
+    print(f'Score for anxiety: {prediction_response.get_score("anxiety")}')
 
     # Get predictions by user
     predictions_user = api.prediction().get_prediction_by_user(user_id)
