@@ -20,6 +20,10 @@ jobs:
 
     runs-on: ubuntu-latest
 
+    environment:
+      name: pypi
+      url: https://pypi.org/p/kintsugi-python
+
     steps:
     - uses: actions/checkout@v4
     - name: Set up Python
