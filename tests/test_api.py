@@ -8,13 +8,10 @@ from src.kintsugi.api import Api, PredictionHandler, FeedbackHandler, ResponseEx
 
 @pytest.fixture
 def api():
-    user_id = 'some-user'
-    is_initiated = True
     x_api_key = 'x-api-key-for-tests'
     url = 'https://tests.kintsugihealth.com'
-    metadata = {}
 
-    api = Api(user_id, is_initiated, x_api_key, url, metadata)
+    api = Api(x_api_key, url)
     api.new_session_id = MagicMock()
 
     return api
@@ -27,12 +24,10 @@ def test_api_initialization():
     url = 'some-url'
     metadata = {'a': 1, 'b': 2}
 
-    api = Api(user_id, is_initiated, x_api_key, url, metadata)
-    assert api.user_id == user_id
-    assert api.is_initiated == is_initiated
+    api = Api(x_api_key, url)
+
     assert api.x_api_key == x_api_key
     assert api.url == url
-    assert api.metadata == metadata
 
 
 def test_get_common_headers(api):
@@ -57,20 +52,17 @@ def test_new_session_id(mock_post, api):
 
 @patch('requests.post')
 def test_new_session_id_failure(mock_post):
-    user_id = 'some-user'
-    is_initiated = True
     x_api_key = 'api-key'
     url = 'some-url'
-    metadata = {'a': 1, 'b': 2}
 
-    api = Api(user_id, is_initiated, x_api_key, url, metadata)
+    api = Api(x_api_key, url)
 
     mock_response = MagicMock()
     mock_response.status_code = 400
     mock_post.return_value = mock_response
 
     with pytest.raises(ResponseException):
-        api.new_session_id()
+        api.new_session_id('some-user-id', {})
 
 
 @patch("requests.post")
