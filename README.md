@@ -1,10 +1,16 @@
 # Kintsugi Python SDK
 Python SDK to access Kintsugi Voice API V2.
 
-## Usage
+## Instalation
+
+```
+pip install kintsugi-python
+```
+
+## Code Example
 ```
 import os
-from src.kintsugi.api import Api
+from kintsugi.api import Api
 
 
 if __name__ == '__main__':
