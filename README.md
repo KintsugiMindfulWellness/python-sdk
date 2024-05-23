@@ -1,5 +1,5 @@
 # Kintsugi Python SDK
-Python SDK to access Kintsugi Voice API v2.
+Python SDK to access Kintsugi Voice API V2.
 
 ## Usage
 ```

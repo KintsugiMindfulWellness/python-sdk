@@ -1,7 +1,7 @@
 [project]
 name = "kintsugi-python"
 version = "0.1.0"
-description = "Default template for PDM package"
+description = "Python SDK to access Kintsugi Voice API V2."
 authors = [
     {name = "Kintsugi Engineering Team", email = "python-sdk@kintsugihealth.com"},
 ]

@@ -1,8 +1,6 @@
 import requests
 import json
-from pprint import pprint
-from src.kintsugi.model import Prediction, FeedbackScore
-from src.kintsugi.parsers import PredictionParser
+from kintsugi.parsers import PredictionParser
 
 
 class ResponseException(Exception):

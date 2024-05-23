@@ -1,4 +1,4 @@
-from src.kintsugi.model import Prediction, FeedbackScore
+from kintsugi.model import Prediction, FeedbackScore
 
 
 class FeedbackScoreParser:
