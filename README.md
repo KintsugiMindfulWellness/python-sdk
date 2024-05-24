@@ -1,7 +1,7 @@
 # Kintsugi Python SDK
 Python SDK to access Kintsugi Voice API V2.
 
-## Instalation
+## Installation
 
 ```
 pip install kintsugi-python
