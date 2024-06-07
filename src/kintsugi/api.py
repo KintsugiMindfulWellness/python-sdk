@@ -105,18 +105,18 @@ class FeedbackHandler:
     def __init__(self, api: Api):
         self.api = api
 
-    def _phq(self, session_id, answers) -> None:
+    def _send_answers(self, path, session_id, answers, expected_count) -> None:
         count = len(answers)
 
-        if count not in (2, 9):
-            raise ValueError(f'Answers count not in (2, 9): {count}.')
+        if count != expected_count:
+            raise ValueError(f'Answers count is not what is expected: {expected_count}.')
 
         data = {
             'data': answers,
             'session_id': session_id,
         }
         response = requests.patch(
-            f'{self.api.url}/feedback/phq/{count}',
+            f'{self.api.url}/feedback/{path}/{count}',
             headers=self.api.get_common_headers(),
             data=json.dumps(data)
         )
@@ -142,7 +142,10 @@ class FeedbackHandler:
             raise ResponseException(response)
 
     def phq_2(self, session_id: str, answers: list) -> None:
-        return self._phq(session_id, answers)
+        return self._send_answers('phq', session_id, answers, 2)
 
     def phq_9(self, session_id: str, answers: list) -> None:
-        return self._phq(session_id, answers)
+        return self._send_answers('phq', session_id, answers, 9)
+
+    def gad_7(self, session_id: str, answers: list) -> None:
+        return self._send_answers('gad', session_id, answers, 7)
