@@ -1,7 +1,7 @@
 # Kintsugi Python SDK
 Python SDK to access Kintsugi Voice API V2.
 
-## Instalation
+## Installation
 
 ```
 pip install kintsugi-python
@@ -57,5 +57,5 @@ if __name__ == '__main__':
     api.feedback().phq_2(session_id, [1, 2])
 
     # PHQ9 feedback
-    api.feedback().phq_2(session_id, [1, 2, 1, 2, 1, 2, 3, 1, 2])
+    api.feedback().phq_9(session_id, [1, 2, 1, 2, 1, 2, 3, 1, 2])
 ```
