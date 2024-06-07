@@ -53,9 +53,14 @@ if __name__ == '__main__':
     # Depression feedback
     api.feedback().depression(session_id, 'false')
 
-    # PHQ2 feedback
+    # PHQ-2 feedback
     api.feedback().phq_2(session_id, [1, 2])
 
-    # PHQ9 feedback
+    # PHQ-9 feedback
     api.feedback().phq_9(session_id, [1, 2, 1, 2, 1, 2, 3, 1, 2])
+
+    # GAD-7 feedback
+    api.feedback().gad_7(session_id, [1, 2, 1, 2, 1, 2, 3])
+
+    print('Done.')
 ```
