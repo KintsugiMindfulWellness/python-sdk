@@ -3,6 +3,9 @@ import json
 from kintsugi.parsers import PredictionParser
 
 
+DEFAULT_URL = 'https://api.kintsugihealth.com/v2'
+
+
 class ResponseException(Exception):
     def __init__(self, response: requests.Response):
         self.code = response.status_code
@@ -13,7 +16,7 @@ class ResponseException(Exception):
 
 
 class Api:
-    def __init__(self, x_api_key: str, url: str):
+    def __init__(self, x_api_key: str, url: str = DEFAULT_URL):
         self.x_api_key = x_api_key
         self.url: str = url
 

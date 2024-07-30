@@ -17,7 +17,6 @@ if __name__ == '__main__':
     # Configuration Parameters
     x_api_key = os.environ['X_API_KEY']
     user_id = os.environ['USER_ID']
-    url = os.environ['URL']
 
     # Arguments
     audio_file_1 = open('/Users/jackson/Downloads/test_audio.wav', 'rb')
@@ -29,7 +28,7 @@ if __name__ == '__main__':
     }
 
     # API instantiation
-    api = Api(x_api_key=x_api_key, url=url)
+    api = Api(x_api_key=x_api_key)
 
     # Prediction using all arguments
     api.prediction().predict(
