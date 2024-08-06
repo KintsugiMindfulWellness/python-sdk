@@ -11,7 +11,7 @@ class FeedbackScore:
 
 class Prediction:
     session_id: str
-    predicted_score: dict
+    predicted_score: dict = {}
     feedback_score: FeedbackScore
     created_at: datetime
     updated_at: datetime

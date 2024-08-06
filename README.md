@@ -9,7 +9,7 @@ pip install kintsugi-python
 
 ## Code Example
 ```
-import os
+import os,time
 from kintsugi.api import Api
 
 
@@ -43,6 +43,10 @@ if __name__ == '__main__':
 
     # Get prediction by session
     prediction_response = api.prediction().get_prediction_by_session(session_id)
+    while prediction_response.status == "processing":
+      time.sleep(5)
+      prediction_response = api.prediction().get_prediction_by_session(session_id)
+
     print(f'Score for depression: {prediction_response.get_score("depression")}')
     print(f'Score for anxiety: {prediction_response.get_score("anxiety")}')
 
