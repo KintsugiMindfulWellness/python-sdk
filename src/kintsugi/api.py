@@ -6,14 +6,17 @@ from kintsugi.parsers import PredictionParser
 DEFAULT_URL = 'https://api.kintsugihealth.com/v2'
 
 
+def get_error_message(response):
+    if response.json().get("message"):
+        return json.dumps(response.json().get("message"))
+    elif response.json().get("predict_error"):
+        return json.dumps(response.json().get("predict_error"))
+    else:
+        return response.status_code
+ 
 class ResponseException(Exception):
-    def __init__(self, response: requests.Response):
-        self.code = response.status_code
-        try:
-            self.message = response.json().get('message')
-        except ValueError:
-            self.message = None
-
+    def __init__(self, message):
+        pass
 
 class Api:
     def __init__(self, x_api_key: str, url: str = DEFAULT_URL):
@@ -41,7 +44,7 @@ class Api:
             data=json.dumps(data)
         )
         if response.status_code != 201:
-            raise ResponseException(response)
+            raise ResponseException(get_error_message(response))
 
         return response.json()['session_id']
 
@@ -73,7 +76,7 @@ class PredictionHandler:
         )
 
         if response.status_code != 202:
-            raise ResponseException(response)
+            raise ResponseException(get_error_message(response))
 
         return response.json()['session_id']
 
@@ -84,7 +87,7 @@ class PredictionHandler:
         )
 
         if response.status_code != 200:
-            raise ResponseException(response)
+            raise ResponseException(get_error_message(response))
 
         data = response.json()
         data['session_id'] = session_id
@@ -97,7 +100,7 @@ class PredictionHandler:
         )
 
         if response.status_code != 200:
-            raise ResponseException(response)
+            raise ResponseException(get_error_message(response))
 
         parser = PredictionParser()
         list_data = response.json()
@@ -125,7 +128,7 @@ class FeedbackHandler:
         )
 
         if response.status_code != 200:
-            raise ResponseException(response)
+            raise ResponseException(get_error_message(response))
 
     def depression(self, session_id: str, data: str):
         if data not in ('false', 'true', 'additional_consideration_required'):
@@ -142,7 +145,7 @@ class FeedbackHandler:
         )
 
         if response.status_code != 200:
-            raise ResponseException(response)
+            raise ResponseException(get_error_message(response))
 
     def phq_2(self, session_id: str, answers: list) -> None:
         return self._send_answers('phq', session_id, answers, 2)
