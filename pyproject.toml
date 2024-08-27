@@ -1,6 +1,6 @@
 [project]
 name = "kintsugi-python"
-version = "0.1.5"
+version = "0.1.6"
 
 description = "Python SDK to access Kintsugi Voice API V2."
 authors = [
