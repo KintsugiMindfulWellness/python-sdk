@@ -29,14 +29,12 @@ class PredictionParser:
         output.is_calibrated = data['is_calibrated']
         output.status = data['status']
 
-        if 'predicted_score' in data:
-            predicted_data_raw = data['predicted_score']
-            predicted_data = predicted_data_raw
+        if output.status != 'processing':
+            categories = data['model_category'].split(',')
 
-            if isinstance(predicted_data_raw, str):
-                predicted_data = {data['model_category']: predicted_data_raw}
-
-            output.predicted_score = predicted_data
+            for category in categories:
+                if 'predicted_score_' + category in data:
+                    output.predicted_score[category] = data['predicted_score_' + category]
 
         if 'actual_score' in data:
             output.feedback_score = FeedbackScoreParser().parse(data['actual_score'])
