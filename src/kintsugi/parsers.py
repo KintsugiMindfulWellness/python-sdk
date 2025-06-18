@@ -21,13 +21,14 @@ class FeedbackScoreParser:
 
 class PredictionParser:
     def parse(self, data: dict) -> Prediction:
-        output = Prediction()
+        output = Prediction(
+            session_id=data['session_id'],
+            created_at=data['created_at'],
+            updated_at=data['updated_at'],
+            is_calibrated=data['is_calibrated'],
+            status=data['status'],
+        )
 
-        output.session_id = data['session_id']
-        output.created_at = data['created_at']
-        output.updated_at = data['updated_at']
-        output.is_calibrated = data['is_calibrated']
-        output.status = data['status']
 
         if output.status != 'processing':
             categories = data['model_category'].split(',')
